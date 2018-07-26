@@ -42,8 +42,13 @@ int main(int argc, char **argv)
         index++;
       }
 
+  // Store new length value of cleaned up message array.
   msgLen = strlen(alphaText);
   printf("Cleaned message length = %d\n\n", msgLen);
+
+  // Convert letters to lowercase
+  for(i=0; i<msgLen; i++)
+    alphaText[i] = tolower(alphaText[i]);
 
   printf("Clean plaintext:\n");
   for(i=1; i<=msgLen; i++)
