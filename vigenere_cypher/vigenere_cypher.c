@@ -1,3 +1,8 @@
+// Run the program from terminal with these commands:
+
+// gcc -Wall -o vigenere_cypher vigenere_cypher.c
+// ./vigenere_cypher message.txt key vector
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,8 +11,10 @@
 int main(int argc, char **argv)
 {
   char *fname, *keyword, *vector;
-  char msg[10000], text[10000], alphaText[10000];
-  int i, index, msgLen;
+  char message[10000], msg[10000], alphaNumMsg[10000];
+  int i, index, msgLen, keyLen;
+  int pad, padAlphaNumMsgLen;
+
   // Respectively set variable parameters equal to input arguments.
   fname = argv[1];
   keyword = argv[2];
@@ -21,42 +28,56 @@ int main(int argc, char **argv)
   FILE *file = fopen(fname, "r" );
   if (file)
       while (fscanf(file, "%s", msg)!=EOF)
-       strcat(text, msg);
+       strcat(message, msg);
   fclose(file);
 
-  printf("Plaintext file name: %s\n", fname);
-  // msgLen = strlen(msg);
-  // printf("Message length = %d\n", msgLen);
-  msgLen = strlen(text);
-  printf("Message length = %d\n", msgLen);
+  printf("Message file name: %s\n\n", fname);
+  msgLen = strlen(message);
+  printf("Message length = %d\n\n", msgLen);
+
+  printf("Original Message text:\n");
+  for(i=1; i<=msgLen; i++)
+    printf("%c", message[i-1]);
+  printf("\n");
 
   // Clean message.txt into only alphanumeric characters.
   for (i=0; i<msgLen; i++)
-    if((int)text[i] >= 65 && (int)text[i] <= 90)
+    if((int)message[i] >= 65 && (int)message[i] <= 90)
     {
-      alphaText[index] = text[i];
+      alphaNumMsg[index] = message[i];
       index++;
-    } else if((int)text[i] >= 97 && (int)text[i] <= 122)
+    } else if((int)message[i] >= 97 && (int)message[i] <= 122)
       {
-        alphaText[index] = text[i];
+        alphaNumMsg[index] = message[i];
         index++;
       }
 
   // Store new length value of cleaned up message array.
-  msgLen = strlen(alphaText);
-  printf("Cleaned message length = %d\n\n", msgLen);
+  msgLen = strlen(alphaNumMsg);
+  printf("\nCleaned message length = %d\n\n", msgLen);
 
   // Convert letters to lowercase
   for(i=0; i<msgLen; i++)
-    alphaText[i] = tolower(alphaText[i]);
+    alphaNumMsg[i] = tolower(alphaNumMsg[i]);
 
-  printf("Clean plaintext:\n");
+  printf("Lowercase alphanumeric message text:\n");
   for(i=1; i<=msgLen; i++)
-    printf("%c", alphaText[i-1]);
+    printf("%c", alphaNumMsg[i-1]);
   printf("\n");
+
+  // Set length of keyword.
+  keyLen = strlen(keyword);
+
+  // Size of padding to be added to the message.
+  // https://en.wikipedia.org/wiki/Padding_(cryptography)
+  pad = keyLen - (msgLen % keyLen);
+  printf("\nNumber of characters to be padded = %d\n\n", pad);
+
+  // Obtain new length for padded message.
+  padAlphaNumMsgLen = msgLen + pad;
+  printf("Cleaned message length with padding = %d\n", padAlphaNumMsgLen);
+
+  // Add 'x' as the padding to the end of the alpha alphanumeric message.
 
   return 0;
 }
-
-// gcc vigenere_cypher.c -Wall
-// ./a.out message.txt key vector
