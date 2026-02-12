@@ -53,3 +53,27 @@ cryptographically secure by modern standards -- it is vulnerable to Kasiski
 examination and frequency analysis -- but layering CBC on top illustrates the
 principle of diffusion: a change in one plaintext block propagates through all
 subsequent ciphertext blocks.
+
+### Tests
+
+Run the test suite with:
+
+```
+cd vigenere_cypher
+bash test.sh
+```
+
+| Category | What's tested |
+|---|---|
+| Argument Validation | 0, 1, 2 args all exit with code 1 and print usage |
+| File Handling | Non-existent file exits with code 1 and prints an error |
+| Edge Case Inputs | Empty file, single character, symbols-only (all stripped), mixed alphanumeric |
+| Padding Edge Cases | Message == keyword length, message shorter than keyword, message that's an exact multiple |
+| Encryption Output | Ciphertext present, deterministic output, different IVs/keywords produce different ciphertext |
+| Case Handling | HELLO and hello encrypt to the same ciphertext |
+| Integration | Original `message.txt` with `keyword`/`vect` runs to completion |
+
+Since C doesn't have a built-in test framework like Python or JavaScript, and
+this program's logic lives entirely in `main()`, the tests are written as a
+shell script that compiles the program, creates temp files with edge-case
+content, runs the binary, and checks exit codes and output for expected values.
