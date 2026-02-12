@@ -1,9 +1,30 @@
+// Vigenere Cipher with Cipher Block Chaining (CBC) - Encryption
+//
+// Reads a message file, strips non-alpha characters, pads to block size,
+// and encrypts using CBC-mode Vigenere. The keyword length determines the
+// block size. Each plaintext block is XOR'd (mod 26 addition) with the
+// previous ciphertext block (or IV), then the Vigenere key is applied.
+//
 // Run the program from terminal with these commands:
-
+//
 // gcc -Wall -o vigenere_cypher vigenere_cypher.c
 // ./vigenere_cypher message.txt keyword vect
-
-// Note: Program can be more dynamic if arrays are malloc'd.
+//
+// Known issues / TODO:
+//   - 'message' array is uninitialized before strcat (undefined behavior).
+//   - 'index' variable is uninitialized before first use (undefined behavior).
+//   - Print loops access arr[-1] when i==0 (off-by-one / undefined behavior).
+//   - fclose() is called outside the fopen-success check (UB if fopen fails).
+//   - No argc validation; fewer than 4 args causes a segfault.
+//   - fscanf "%s" has no width limit; long tokens overflow the buffer.
+//   - messageText is never null-terminated after filtering.
+//   - Lowercase loop iterates over original msgLen, not filtered length.
+//   - Padding adds a full block of 'x' when message is already aligned,
+//     which is ambiguous since 'x' is indistinguishable from plaintext.
+//   - vec[] is written past keyLen in CBC loop (works by accident due to
+//     buffer size, but is fragile and unconventional).
+//   - Fixed 1000-byte buffers; could use malloc for dynamic sizing.
+//   - No decryption routine.
 
 #include <ctype.h>
 #include <stdio.h>
@@ -51,6 +72,8 @@ int main(int argc, char **argv)
   printf("\n\n");
 
   // Remove all symbols from original message, keep only letters.
+  // BUG: 'index' is uninitialized here; should be set to 0.
+  // BUG: Using magic numbers 65/90/97/122 instead of 'A'/'Z'/'a'/'z'.
   for (i = 0; i < msgLen; i++)
     if((int)message[i] >= 65 && (int)message[i] <= 90)
     {
@@ -64,6 +87,8 @@ int main(int argc, char **argv)
     }
 
   // Convert all letters in clean message to lowercase.
+  // BUG: Should iterate over filtered length (index), not original msgLen.
+  // BUG: messageText is not null-terminated after the filtering loop above.
   for(i = 0; i < msgLen; i++)
     messageText[i] = tolower(messageText[i]);
 
@@ -119,7 +144,7 @@ int main(int argc, char **argv)
       i++;
   }
 
-  // Vector array is printing out wrong.
+  // NOTE: Vector array print has the same off-by-one bug as other loops.
   printf("Vector Array:\n\n");
   for(i = 0; i <= keyLen; i++)
     printf("%c", vec[i-1]);
