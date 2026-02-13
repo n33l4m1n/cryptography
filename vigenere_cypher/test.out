@@ -1,0 +1,50 @@
+Compiling...
+
+=== Argument Validation ===
+  FAIL: No arguments
+        expected exit=1, got exit=139
+        output: 
+  FAIL: Only one argument
+        expected exit=1, got exit=139
+        output: 
+  FAIL: Only two arguments
+        expected exit=1, got exit=139
+        output: 
+  FAIL: Usage message shown
+        expected output to contain: Usage:
+        output: 
+
+=== File Handling ===
+  FAIL: Non-existent file
+        expected exit=1, got exit=139
+        output: 
+  FAIL: File error message
+        expected output to contain: Error:
+        output: 
+
+=== Edge Case Inputs ===
+  PASS: Empty file produces output
+  PASS: Single character message
+  PASS: Symbols-only message, all stripped
+  PASS: Mixed content keeps only letters
+
+=== Padding Edge Cases ===
+  PASS: Message length == keyword length, pad = keyword length
+  PASS: Message shorter than keyword
+  PASS: Message multiple of keyword length
+
+=== Encryption Output ===
+  PASS: Encryption produces ciphertext section
+  PASS: Same input produces same ciphertext (deterministic)
+  FAIL: Different IVs produce different ciphertext
+  FAIL: Different keywords produce different ciphertext
+
+=== Case Handling ===
+  PASS: Upper and lowercase input produce same ciphertext
+
+=== Original Test File ===
+  PASS: message.txt with keyword/vect runs successfully
+
+================================
+  Results: 11 passed, 8 failed
+================================
